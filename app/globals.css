@@ -152,6 +152,9 @@
   .gradient-title {
     @apply inline-block bg-gradient-to-b from-gray-400 via-gray-200 to-gray-600 text-transparent bg-clip-text font-extrabold tracking-tighter pb-2 pr-2;
   }
+  .gradient{
+   @apply bg-gradient-to-b from-gray-400 via-gray-200 to-gray-600
+  }
 }
 
 .hero-image-wrapper {
