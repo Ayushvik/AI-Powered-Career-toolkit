@@ -171,3 +171,14 @@
 .hero-image.scrolled {
   transform: rotateX(0deg) scale(1) translateY(40px);
 }
+@layer utilities {
+  .text-border {
+    -webkit-text-stroke: 1px black; /* Outline thickness and color */
+    color: black; /* Fill color */
+  }
+
+  .text-border-white {
+    -webkit-text-stroke: 1px white;
+    color: black;
+  }
+}

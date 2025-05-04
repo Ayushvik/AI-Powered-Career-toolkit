@@ -9,25 +9,27 @@ datasource db {
 
 model User {
   id            String    @id @default(uuid())
-  clerkUserId   String    @unique // clerk user id
+  clerkUserId   String    @unique
   email         String    @unique
   name          String?
   imageUrl      String?
-  industry      String?    // Combined industry-subindustry (e.g., "tech-software-development")
+  industry      String?
   industryInsight IndustryInsight? @relation(fields: [industry], references: [industry])
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  // Profile fields
   bio           String?
-  experience    Int?      // Years of experience
+  experience    Int?
   
-  // Relations
-  skills        String[]  // Array of skills
+  skills        String[]
   assessments   Assessment[]
   resume        Resume?
   coverLetter   CoverLetter[]
+
+  // 👉 Add this line for OnlineStatus relation
+  onlineStatus  OnlineStatus?
 }
+
 
 model Assessment {
   id            String    @id @default(cuid())
@@ -97,3 +99,10 @@ model IndustryInsight {
 
   @@index([industry])
 }
+model OnlineStatus {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  lastSeen  DateTime
+}
+
