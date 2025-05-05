@@ -2,43 +2,43 @@
 import Link from "next/link";
 import { Button } from "./ui/button";
 import Image from "next/image";
-import { useEffect, useRef,useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-
 
 const HeroSection = () => {
   const imageRef = useRef(null);
+  const [totalUsers, setTotalUsers] = useState(null);
 
-  const [stats, setStats] = useState({ totalUsers: 0, onlineUsers: 0 });
-
-  useEffect(() => {
-    fetch("/api/user-stats")
-      .then(res => res.json())
-      .then(data => setStats(data));
-  }, [])
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      fetch("/api/online-ping", { method: "POST" });
-    }, 30000); // every 30 sec
-    return () => clearInterval(interval);
-  }, []);
-  
-
+  // Scroll animation
   useEffect(() => {
     const imageElement = imageRef.current;
     const handleScroll = () => {
       const scrollPosition = window.scrollY;
       const scrollThreshold = 100;
       if (scrollPosition > scrollThreshold) {
-        imageElement.classList.add("scrolled");
+        imageElement?.classList.add("scrolled");
       } else {
-        imageElement.classList.remove("scrolled");
+        imageElement?.classList.remove("scrolled");
       }
     };
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Fetch total users from API
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const res = await fetch("/api/stats");
+        const data = await res.json();
+        setTotalUsers(data.totalUsers);
+      } catch (err) {
+        console.error("Failed to load total users", err);
+      }
+    };
+
+    fetchStats();
   }, []);
 
   return (
@@ -73,34 +73,27 @@ const HeroSection = () => {
               className="rounded-lg shadow-2xl border mx-auto"
               priority
             />
-{/* ONLINE USERS — top center, responsive size */}
 
+            <div
+              className="
+                absolute top-1/2 left-1/2 
+                transform -translate-x-1/2 -translate-y-1/2 
+                text-black dark:text-white text-center
+                w-[90%] sm:w-[80%] md:w-[60%] lg:w-[50%]
+              "
+            >
+              <div className="gradient-title text-4xl md:text-5xl font-bold">
+                {totalUsers !== null ? (
+                  totalUsers.toLocaleString()
+                ) : (
+                  <Skeleton className="h-8 w-32 mx-auto" />
+                )}
+              </div>
 
-{/* TOTAL USERS — center of the screen */}
-<div className="
-  absolute 
-  top-1/2 
-  left-1/2 
-  transform -translate-x-1/2 -translate-y-1/2 
-  text-black dark:text-white
-  text-center 
-  px-4 sm:px-6 md:px-10 
-  py-6 sm:py-8 md:py-10
-  w-[90%] sm:w-[80%] md:w-[60%] lg:w-[50%]
-">
- <div className="gradient-title text-3xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold">
-  {stats.totalUsers > 0 ? (
-    stats.totalUsers
-  ) : (
-    <Skeleton className="h-8 w-32 mx-auto" />
-  )}
-</div>
-
-  <p className="mt-2 text-2xl font-bold sm:text-sm md:text-base lg:text-lg max-w-full sm:max-w-md md:max-w-xl mx-auto">
-    Users have used Elevate to create AI-generated cover letters and resumes.
-  </p>
-</div>
-
+              <p className="mt-2 text-lg md:text-xl font-medium max-w-xl mx-auto">
+                Users have used Elevate to create AI-generated cover letters and resumes.
+              </p>
+            </div>
           </div>
         </div>
       </div>
